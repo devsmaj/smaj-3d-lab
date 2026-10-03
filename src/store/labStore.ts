@@ -1,4 +1,4 @@
 import { create } from 'zustand'
-export type ComponentId = 'processor' | null
-type LabState = { selectedComponent: ComponentId; selectComponent: (component: ComponentId) => void }
-export const useLabStore = create<LabState>((set) => ({ selectedComponent: null, selectComponent: (selectedComponent) => set({ selectedComponent }) }))
+import type { ComponentId } from '../data/components'
+type LabState={selectedComponent:ComponentId;visited:ComponentId[];selectComponent:(component:ComponentId)=>void}
+export const useLabStore=create<LabState>((set)=>({selectedComponent:'motherboard',visited:['motherboard'],selectComponent:(selectedComponent)=>set(state=>({selectedComponent,visited:state.visited.includes(selectedComponent)?state.visited:[...state.visited,selectedComponent]}))}))

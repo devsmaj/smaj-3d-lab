@@ -1,4 +1,4 @@
-# SMAJ 3D Lab ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Product Roadmap
+# SMAJ 3D Lab - Product Roadmap
 
 The build stays in this order so every interaction layer is stable before the next begins.
 
@@ -29,8 +29,8 @@ The build stays in this order so every interaction layer is stable before the ne
 - [x] Preserve mouse and touch fallback controls
 
 ## 5. Interactive Computer Lab
-- [ ] Teach CPU, RAM, GPU, SSD, motherboard, and cooling
-- [ ] Add structured lessons and an interactive knowledge check
+- [x] Teach CPU, RAM, GPU, SSD, motherboard, and cooling
+- [x] Add structured lessons and an interactive knowledge check
 
 ## 6. AI tutor and accounts
 - [ ] Add a contextual AI tutor after the core lab is stable

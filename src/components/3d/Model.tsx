@@ -1,16 +1,17 @@
-import { useGLTF } from '@react-three/drei'
+import { Html, useGLTF } from '@react-three/drei'
 import type { ThreeEvent } from '@react-three/fiber'
 import { useEffect, useMemo } from 'react'
 import { Mesh, MeshStandardMaterial } from 'three'
+import { componentByModelName, components } from '../../data/components'
 import { useLabStore } from '../../store/labStore'
 
 type Props={rotation:[number,number,number]}
+const labelPositions:Record<string,[number,number,number]>={MOTHERBOARD:[-2.15,.35,1.5],CPU:[.45,.65,.1],RAM:[-1.48,.72,.35],GPU:[.15,.68,-1.05],SSD:[1.82,.62,.82],COOLING:[1.72,.82,-.18]}
 export function Model({rotation}:Props){
- const {scene}=useGLTF(`${import.meta.env.BASE_URL}models/motherboard.gltf`)
- const model=useMemo(()=>scene.clone(true),[scene])
- const selected=useLabStore(s=>s.selectedComponent==='processor');const select=useLabStore(s=>s.selectComponent)
- useEffect(()=>{const cpu=model.getObjectByName('CPU') as Mesh|undefined;if(!cpu)return;cpu.material=(cpu.material as MeshStandardMaterial).clone();const material=cpu.material as MeshStandardMaterial;material.emissive.set(selected?'#7d5410':'#000000');material.emissiveIntensity=selected ? .5 : 0},[model,selected])
- const choose=(event:ThreeEvent<MouseEvent>)=>{event.stopPropagation();if(event.object.name==='CPU')select('processor')}
- return <primitive object={model} rotation={rotation} onClick={choose} onPointerEnter={()=>document.body.style.cursor='pointer'} onPointerLeave={()=>document.body.style.cursor='default'}/>
+ const{scene}=useGLTF(`${import.meta.env.BASE_URL}models/motherboard.gltf`);const selected=useLabStore(s=>s.selectedComponent),select=useLabStore(s=>s.selectComponent)
+ const model=useMemo(()=>{const clone=scene.clone(true);clone.traverse(object=>{if(object instanceof Mesh)object.material=(object.material as MeshStandardMaterial).clone()});return clone},[scene])
+ useEffect(()=>{model.traverse(object=>{if(!(object instanceof Mesh)||!componentByModelName[object.name])return;const material=object.material as MeshStandardMaterial;const active=componentByModelName[object.name]===selected;material.emissive.set(active?'#8b6015':'#000000');material.emissiveIntensity=active ? .58 : 0})},[model,selected])
+ const choose=(event:ThreeEvent<MouseEvent>)=>{const id=componentByModelName[event.object.name];if(id){event.stopPropagation();select(id)}}
+ return <group rotation={rotation}><primitive object={model} onClick={choose} onPointerEnter={()=>document.body.style.cursor='pointer'} onPointerLeave={()=>document.body.style.cursor='default'}/>{components.map(component=><Html key={component.id} position={labelPositions[component.modelName]} center distanceFactor={9}><button className={`part-label ${selected===component.id?'active':''}`} onClick={()=>select(component.id)}>{component.shortName}</button></Html>)}</group>
 }
 useGLTF.preload(`${import.meta.env.BASE_URL}models/motherboard.gltf`)
