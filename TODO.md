@@ -33,8 +33,9 @@ The build stays in this order so every interaction layer is stable before the ne
 - [x] Add structured lessons and an interactive knowledge check
 
 ## 6. AI tutor and accounts
-- [ ] Add a contextual AI tutor after the core lab is stable
-- [ ] Add accounts, saved progress, quiz results, and learning history
+- [x] Add a contextual tutor with guided fallback and a protected AI function
+- [x] Add guest accounts, local progress, quiz history, Supabase auth, and cloud sync
+- [ ] Connect the production Supabase project and server-side OpenAI secret
 
 ## 7. Quality and launch
 - [ ] Optimize 3D, camera, MediaPipe, and React performance
