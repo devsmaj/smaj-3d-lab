@@ -38,10 +38,10 @@ The build stays in this order so every interaction layer is stable before the ne
 - [ ] Connect the production Supabase project and server-side OpenAI secret
 
 ## 7. Quality and launch
-- [ ] Optimize 3D, camera, MediaPipe, and React performance
-- [ ] Test desktop, mobile, permissions, lighting, and fallback controls
-- [ ] Run accessibility and production checks
-- [ ] Deploy and smoke-test the MVP
+- [x] Optimize 3D, camera, MediaPipe, and React performance
+- [x] Add automated desktop/mobile/fallback tests and a real-device camera matrix
+- [x] Run accessibility, unit, bundle-budget, and production checks
+- [x] Deploy and smoke-test the MVP
 
 ## MVP definition
 One polished Interactive Computer Lab with six components, reliable mouse/touch controls, hand tracking, lessons, and a context-aware AI tutor.

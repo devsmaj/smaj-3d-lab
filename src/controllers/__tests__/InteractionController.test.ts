@@ -1,0 +1,5 @@
+import { describe,expect,it } from 'vitest'
+import { InteractionController } from '../InteractionController'
+import type { GestureResult } from '../../gestures/GestureEngine'
+const result=(gesture:GestureResult['gesture'],x=.5,y=.5,activated=false):GestureResult=>({gesture,confidence:1,activated,pointer:{x:0,y:0,z:0},screenPointer:{x,y},palmScale:.3,landmarkCount:21})
+describe('InteractionController',()=>{it('selects at the point position',()=>{const command=new InteractionController().update(result('POINT'),1000);expect(command.selectAt).toEqual({x:.5,y:.5})});it('rotates while pinched and releases with an open palm',()=>{const controller=new InteractionController();expect(controller.update(result('PINCH',.4,.4),1000).grabbed).toBe(true);const moved=controller.update(result('PINCH',.5,.45),1040);expect(moved.rotationY).toBeGreaterThan(0);const released=controller.update(result('OPEN_PALM'),1080);expect(released.released).toBe(true);expect(released.grabbed).toBe(false)});it('turns on an activated swipe',()=>{expect(new InteractionController().update(result('SWIPE_RIGHT',.5,.5,true),1000).rotationY).toBeGreaterThan(0)})})
