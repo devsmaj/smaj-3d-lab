@@ -1,4 +1,4 @@
-# SMAJ 3D Lab — Product Roadmap
+# SMAJ 3D Lab â€” Product Roadmap
 
 The build stays in this order so every interaction layer is stable before the next begins.
 
@@ -13,10 +13,10 @@ The build stays in this order so every interaction layer is stable before the ne
 - [x] Add model loading, error, progress, keyboard, and mobile checks
 
 ## 2. Webcam and hand landmarks
-- [ ] Add a camera permission explainer and explicit enable action
-- [ ] Implement CameraFeed with getUserMedia and error states
-- [ ] Integrate MediaPipe and visualize all 21 landmarks
-- [ ] Add confidence thresholds and coordinate smoothing
+- [x] Add a camera permission explainer and explicit enable action
+- [x] Implement CameraFeed with getUserMedia and error states
+- [x] Integrate MediaPipe and visualize all 21 landmarks
+- [x] Add confidence thresholds and coordinate smoothing
 
 ## 3. Gesture engine
 - [ ] Implement Point, Pinch, Open Palm, Swipe Left, and Swipe Right
