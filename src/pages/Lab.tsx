@@ -1,4 +1,4 @@
-﻿import { Camera, FlaskConical, Hand, MousePointer2, RotateCcw } from 'lucide-react'
+import { Camera, FlaskConical, Hand, MousePointer2, RotateCcw } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { ModelInfo } from '../components/3d/ModelInfo'
 import { Scene } from '../components/3d/Scene'

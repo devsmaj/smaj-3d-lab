@@ -1,1 +1,1 @@
-﻿export function CameraFeed(){return null}
+export function CameraFeed(){return null}

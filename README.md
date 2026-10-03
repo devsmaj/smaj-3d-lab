@@ -1,4 +1,4 @@
-﻿# SMAJ 3D Lab
+# SMAJ 3D Lab
 
 **Interactive 3D Science Learning Platform**
 

@@ -1,4 +1,4 @@
-﻿import { useGLTF } from '@react-three/drei'
+import { useGLTF } from '@react-three/drei'
 import type { ThreeEvent } from '@react-three/fiber'
 import { useEffect, useMemo } from 'react'
 import { Mesh, MeshStandardMaterial } from 'three'

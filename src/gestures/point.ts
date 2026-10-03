@@ -1,1 +1,1 @@
-﻿export const isPointing=()=>false
+export const isPointing=()=>false

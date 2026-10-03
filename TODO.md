@@ -1,4 +1,4 @@
-﻿# SMAJ 3D Lab — Product Roadmap
+# SMAJ 3D Lab — Product Roadmap
 
 The build stays in this order so every interaction layer is stable before the next begins.
 

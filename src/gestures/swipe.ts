@@ -1,1 +1,1 @@
-﻿export const getSwipeDirection=():'LEFT'|'RIGHT'|null=>null
+export const getSwipeDirection=():'LEFT'|'RIGHT'|null=>null

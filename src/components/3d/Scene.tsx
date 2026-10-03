@@ -1,4 +1,4 @@
-﻿import { Environment, Html, OrbitControls, useProgress } from '@react-three/drei'
+import { Environment, Html, OrbitControls, useProgress } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import { Component, Suspense, type ReactNode } from 'react'
 import { useLabStore } from '../../store/labStore'

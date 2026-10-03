@@ -1,1 +1,1 @@
-﻿export const isPinching=()=>false
+export const isPinching=()=>false

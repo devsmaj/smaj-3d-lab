@@ -1,1 +1,1 @@
-﻿export class HandTracker{}
+export class HandTracker{}

@@ -1,1 +1,1 @@
-﻿export const isOpenPalm=()=>false
+export const isOpenPalm=()=>false
