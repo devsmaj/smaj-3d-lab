@@ -9,3 +9,7 @@ SMAJ 3D Lab is a browser-based learning environment where students inspect educa
 ## Run locally
 
 Run `npm install`, then `npm run dev`. Use `npm run build` for a production build. Progress is tracked in [TODO.md](./TODO.md).
+
+## GitHub Pages
+
+The `Deploy SMAJ 3D Lab to GitHub Pages` workflow builds and publishes every push to `main`. The live site is available at https://devsmaj.github.io/smaj-3d-lab/ after the workflow completes.

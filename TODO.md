@@ -9,8 +9,8 @@ The build stays in this order so every interaction layer is stable before the ne
 - [x] Create the planned source architecture
 - [x] Render a computer-component scene with lighting and a stable camera
 - [x] Add mouse/touch orbit, zoom, selection, and educational information
-- [ ] Replace prototype geometry with an optimized GLB/glTF motherboard
-- [ ] Add model loading, error, progress, keyboard, and mobile checks
+- [x] Replace prototype geometry with an optimized GLB/glTF motherboard
+- [x] Add model loading, error, progress, keyboard, and mobile checks
 
 ## 2. Webcam and hand landmarks
 - [ ] Add a camera permission explainer and explicit enable action
