@@ -1,0 +1,1 @@
+﻿export const isPinching=()=>false
