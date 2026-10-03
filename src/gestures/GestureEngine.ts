@@ -5,7 +5,7 @@ import { SwipeDetector } from './swipe'
 
 export type Gesture='POINT'|'PINCH'|'OPEN_PALM'|'SWIPE_LEFT'|'SWIPE_RIGHT'|'NONE'
 export type NormalizedPoint={x:number;y:number;z:number}
-export type GestureResult={gesture:Gesture;confidence:number;activated:boolean;pointer:NormalizedPoint;palmScale:number;landmarkCount:number}
+export type GestureResult={gesture:Gesture;confidence:number;activated:boolean;pointer:NormalizedPoint;screenPointer:{x:number;y:number};palmScale:number;landmarkCount:number}
 
 export function normalizeLandmarks(landmarks:Landmark[]){const wrist=landmarks[0];const scale=Math.max(distance(wrist,landmarks[9]),.001);return{points:landmarks.map(point=>({x:(point.x-wrist.x)/scale,y:(point.y-wrist.y)/scale,z:(point.z-wrist.z)/scale})),scale}}
 
@@ -21,8 +21,8 @@ export class GestureEngine{
   const required=next.startsWith('SWIPE')?1:3;if(this.candidateFrames>=required)this.stable=next
   const activated=this.stable!=='NONE'&&this.stable!==this.candidate?false:this.candidateFrames===required&&time-this.lastActivation>450
   if(activated)this.lastActivation=time
-  return{gesture:this.stable,confidence,activated,pointer:normalized.points[8],palmScale:normalized.scale,landmarkCount:landmarks.length}
+  return{gesture:this.stable,confidence,activated,pointer:normalized.points[8],screenPointer:{x:1-landmarks[8].x,y:landmarks[8].y},palmScale:normalized.scale,landmarkCount:landmarks.length}
  }
  reset(){this.swipe.reset();this.candidate='NONE';this.candidateFrames=0;this.stable='NONE';this.lastActivation=0}
- private empty():GestureResult{return{gesture:'NONE',confidence:0,activated:false,pointer:{x:0,y:0,z:0},palmScale:0,landmarkCount:0}}
+ private empty():GestureResult{return{gesture:'NONE',confidence:0,activated:false,pointer:{x:0,y:0,z:0},screenPointer:{x:.5,y:.5},palmScale:0,landmarkCount:0}}
 }

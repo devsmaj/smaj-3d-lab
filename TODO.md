@@ -1,4 +1,4 @@
-# SMAJ 3D Lab Ã¢â‚¬â€ Product Roadmap
+# SMAJ 3D Lab ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Product Roadmap
 
 The build stays in this order so every interaction layer is stable before the next begins.
 
@@ -24,9 +24,9 @@ The build stays in this order so every interaction layer is stable before the ne
 - [x] Build a gesture diagnostics view
 
 ## 4. Gesture-to-3D control
-- [ ] Connect pointing to selection and pinch to grab/release
-- [ ] Add movement, rotation, and zoom
-- [ ] Preserve mouse and touch fallback controls
+- [x] Connect pointing to selection and pinch to grab/release
+- [x] Add movement, rotation, and zoom
+- [x] Preserve mouse and touch fallback controls
 
 ## 5. Interactive Computer Lab
 - [ ] Teach CPU, RAM, GPU, SSD, motherboard, and cooling
