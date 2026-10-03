@@ -1,4 +1,4 @@
-# SMAJ 3D Lab â€” Product Roadmap
+# SMAJ 3D Lab Ã¢â‚¬â€ Product Roadmap
 
 The build stays in this order so every interaction layer is stable before the next begins.
 
@@ -19,9 +19,9 @@ The build stays in this order so every interaction layer is stable before the ne
 - [x] Add confidence thresholds and coordinate smoothing
 
 ## 3. Gesture engine
-- [ ] Implement Point, Pinch, Open Palm, Swipe Left, and Swipe Right
-- [ ] Normalize coordinates and add cooldowns and movement thresholds
-- [ ] Build a gesture diagnostics view
+- [x] Implement Point, Pinch, Open Palm, Swipe Left, and Swipe Right
+- [x] Normalize coordinates and add cooldowns and movement thresholds
+- [x] Build a gesture diagnostics view
 
 ## 4. Gesture-to-3D control
 - [ ] Connect pointing to selection and pinch to grab/release
