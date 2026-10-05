@@ -6,7 +6,7 @@ import { askTutor, type TutorMessage, type TutorMode } from '../../services/tuto
 import { useLabStore } from '../../store/labStore'
 
 const prompts:[TutorMode,string][]=[['explain','Explain this'],['example','Give an example'],['simplify','Make it easier'],['quiz','Quiz me'],['compare','Compare with CPU']]
-type RecognitionResultEvent={results:ArrayLike<{0:{transcript:string}>}
+type RecognitionResultEvent={results:ArrayLike<{0:{transcript:string}}> }
 type Recognition={continuous:boolean;interimResults:boolean;lang:string;onresult:((event:RecognitionResultEvent)=>void)|null;onend:(()=>void)|null;onerror:(()=>void)|null;start:()=>void;stop:()=>void}
 
 export function TutorPanel({open,onClose}:{open:boolean;onClose:()=>void}){
