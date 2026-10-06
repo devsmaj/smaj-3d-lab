@@ -1,37 +1,29 @@
 import { Mic, MicOff, Volume2, VolumeX, X } from 'lucide-react'
-import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
+import { useCallback, useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
 import { componentById } from '../../data/components'
-import { askTutor, NovaError, type NovaContext, type TutorMessage } from '../../services/tutor'
+import { askTutor, type TutorMessage } from '../../services/tutor'
 import { useLabStore } from '../../store/labStore'
 
 type RecognitionResultEvent = { results: ArrayLike<{ 0: { transcript: string }; isFinal?: boolean }> }
-type RecognitionErrorEvent = { error?: string; message?: string }
 type Recognition = {
   continuous: boolean
   interimResults: boolean
   lang: string
   onresult: ((event: RecognitionResultEvent) => void) | null
   onend: (() => void) | null
-  onerror: ((event: RecognitionErrorEvent) => void) | null
+  onerror: (() => void) | null
   start: () => void
   stop: () => void
-  abort: () => void
 }
 type Position = { x: number; y: number }
-type Props = { open: boolean; onClose: () => void; exploded: boolean; tracking: boolean; gesture: string | null }
 
-export function TutorPanel({ open, onClose, exploded, tracking, gesture }: Props) {
+export function TutorPanel({ open, onClose }: { open: boolean; onClose: () => void }) {
   const selected = useLabStore(s => s.selectedComponent)
-  const visited = useLabStore(s => s.visited)
-  const quizResults = useLabStore(s => s.quizResults)
   const component = componentById[selected]
-
-  const intro = () => ({
-    role: 'tutor' as const,
+  const [latest, setLatest] = useState<TutorMessage>({
+    role: 'tutor',
     text: `You are exploring the ${component.name}. Speak to ask me anything.`,
   })
-
-  const [messages, setMessages] = useState<TutorMessage[]>([intro()])
   const [busy, setBusy] = useState(false)
   const [voiceEnabled, setVoiceEnabled] = useState(true)
   const [speaking, setSpeaking] = useState(false)
@@ -44,27 +36,14 @@ export function TutorPanel({ open, onClose, exploded, tracking, gesture }: Props
   const face = useRef<HTMLDivElement>(null)
   const drag = useRef<{ dx: number; dy: number } | null>(null)
   const lastSpoken = useRef('')
-  const request = useRef<AbortController | null>(null)
-
-  const latest = messages[messages.length - 1] ?? intro()
-
-  const context = useMemo<NovaContext>(
-    () => ({
-      componentId: selected,
-      lesson: component.lesson,
-      interactionState: exploded ? 'exploded' : 'assembled',
-      handTracking: tracking,
-      gesture,
-      visited,
-      passed: Object.entries(quizResults).filter(([, passed]) => passed).length,
-    }),
-    [selected, component.lesson, exploded, tracking, gesture, visited, quizResults]
-  )
 
   useEffect(() => {
-    setMessages(current => (current.some(message => message.role === 'student') ? current : [intro()]))
+    setLatest({
+      role: 'tutor',
+      text: `You are exploring the ${component.name}. Speak to ask me anything.`,
+    })
     lastSpoken.current = ''
-  }, [selected])
+  }, [selected, component.name])
 
   useEffect(() => {
     if (open)
@@ -87,75 +66,52 @@ export function TutorPanel({ open, onClose, exploded, tracking, gesture }: Props
     return instance
   }, [])
 
-  const interrupt = useCallback(() => {
-    request.current?.abort()
-    request.current = null
-    window.speechSynthesis?.cancel()
-    setSpeaking(false)
-    setBusy(false)
-  }, [])
-
   const send = useCallback(
     async (text: string) => {
       const question = text.trim()
       if (!question || busy) return
-
-      interrupt()
-      const history = messages.slice(-12)
-      const controller = new AbortController()
-      request.current = controller
-
-      setMessages(current => [...current, { role: 'student', text: question }])
+      setLatest({ role: 'student', text: question })
       setBusy(true)
-
       try {
-        const response = await askTutor(question, history, context, controller.signal)
-        setMessages(current => [...current, response])
-
-        if (voiceEnabled && response.role === 'tutor') {
-          const utterance = new SpeechSynthesisUtterance(response.text)
+        const result = await askTutor(selected, question)
+        const message: TutorMessage = { role: 'tutor', text: result.answer }
+        setLatest(message)
+        if (voiceEnabled) {
+          const utterance = new SpeechSynthesisUtterance(result.answer)
           utterance.onstart = () => setSpeaking(true)
           utterance.onend = () => setSpeaking(false)
-          lastSpoken.current = response.text
+          lastSpoken.current = result.answer
           window.speechSynthesis?.speak(utterance)
         }
       } catch (error) {
-        if (error instanceof NovaError) {
-          setMessages(current => [...current, { role: 'tutor', text: error.message, error: true }])
-        }
+        setLatest({ role: 'tutor', text: String(error) })
       } finally {
         setBusy(false)
-        if (request.current === controller) request.current = null
       }
     },
-    [messages, busy, voiceEnabled, context, interrupt]
+    [selected, busy, voiceEnabled]
   )
 
   const beginListening = useCallback(() => {
     if (!listenWanted.current || recognition.current || speaking) return
-
     const instance = getRecognition()
     if (!instance) {
       listenWanted.current = false
       setListenEnabled(false)
       return
     }
-
     recognition.current = instance
     setRecognizing(true)
-
     instance.onresult = event => {
       let interim = ''
       for (let i = event.results.length - 1; i >= 0; i--) {
         interim = event.results[i][0]?.transcript || ''
         if (event.results[i]?.isFinal) break
       }
-
       if (interim && interim !== lastSpoken.current) {
         lastSpoken.current = interim
       }
     }
-
     instance.onend = () => {
       setRecognizing(false)
       recognition.current = null
@@ -163,13 +119,10 @@ export function TutorPanel({ open, onClose, exploded, tracking, gesture }: Props
         window.setTimeout(() => beginListening(), 100)
       }
     }
-
-    instance.onerror = event => {
-      console.error('Speech recognition error:', event.error || event.message)
+    instance.onerror = () => {
       setRecognizing(false)
       recognition.current = null
     }
-
     instance.start()
   }, [getRecognition, speaking, listenEnabled])
 
@@ -196,32 +149,28 @@ export function TutorPanel({ open, onClose, exploded, tracking, gesture }: Props
       listenWanted.current = false
       recognition.current?.stop()
       recognition.current = null
-      interrupt()
+      window.speechSynthesis?.cancel()
+      setSpeaking(false)
       setRecognizing(false)
       return
     }
-
-    if (busy || latest.error || !voiceEnabled || latest.role === 'student') {
+    if (!voiceEnabled || latest.role === 'student') {
       setListenEnabled(false)
       return
     }
-
     setListenEnabled(true)
-  }, [open, busy, latest, voiceEnabled, interrupt])
+  }, [open, voiceEnabled, latest])
 
   useEffect(() => {
     const follow = (event: PointerEvent) => {
       const node = face.current
       if (!node) return
-
       const box = node.getBoundingClientRect()
       const dx = Math.max(-3, Math.min(3, (event.clientX - (box.left + box.width / 2)) / 30))
       const dy = Math.max(-3, Math.min(3, (event.clientY - (box.top + box.height / 2)) / 30))
-
       node.style.setProperty('--eye-x', `${dx}px`)
       node.style.setProperty('--eye-y', `${dy}px`)
     }
-
     window.addEventListener('pointermove', follow)
     return () => window.removeEventListener('pointermove', follow)
   }, [])
@@ -230,28 +179,23 @@ export function TutorPanel({ open, onClose, exploded, tracking, gesture }: Props
     () => () => {
       listenWanted.current = false
       recognition.current?.stop()
-      request.current?.abort()
       window.speechSynthesis?.cancel()
     },
     []
   )
 
   const toggleListen = () => {
-    if (speaking || busy) {
-      interrupt()
-      listenWanted.current = true
-      setListenEnabled(true)
-      window.setTimeout(beginListening, 0)
-      return
-    }
-
     listenWanted.current = !listenEnabled
-    setListenEnabled(listenWanted.current)
+    setListenEnabled(value => !value)
   }
 
   const toggleVoice = () => {
-    if (voiceEnabled) interrupt()
-    else lastSpoken.current = ''
+    if (voiceEnabled) {
+      window.speechSynthesis?.cancel()
+      setSpeaking(false)
+    } else {
+      lastSpoken.current = ''
+    }
     setVoiceEnabled(value => !value)
   }
 
@@ -290,13 +234,8 @@ export function TutorPanel({ open, onClose, exploded, tracking, gesture }: Props
         <div className="ai-orb-eye ai-orb-eye-right" />
       </div>
 
-      <div className="ai-orb-messages">
-        {messages.map((msg, i) => (
-          <div key={i} className={`message message-${msg.role}`}>
-            {msg.error && <span className="error-icon">⚠️</span>}
-            {msg.text}
-          </div>
-        ))}
+      <div className="ai-orb-message">
+        <div className={`message message-${latest.role}`}>{latest.text}</div>
       </div>
 
       <div className="ai-orb-controls">
