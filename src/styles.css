@@ -109,3 +109,4 @@ html,body,#root{width:100%;height:100%;max-width:100%;overflow:hidden!important}
 @media(max-width:900px){.system-status{left:8px;bottom:74px;width:220px}.component-metadata,.event-stream{display:none}}
 @media(max-width:600px){.system-status{width:182px;padding:6px;font-size:.43rem}.system-status span{grid-template-columns:45px 1fr auto}.system-status span:nth-child(n+3){display:none}.interaction-reticle{display:none}}
 @media(prefers-reduced-motion:reduce){.interaction-reticle{transition:none}}
+.ai-speech.error{color:#ffd6d6;border-color:rgba(255,105,105,.6);background:rgba(42,8,12,.92)}.ai-speech.error:after{background:rgba(42,8,12,.92);border-color:rgba(255,105,105,.6)}

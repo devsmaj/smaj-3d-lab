@@ -7,3 +7,6 @@ dist
 .env
 .env.*
 !.env.example
+
+supabase/.temp
+public/models/computer-system.glb
