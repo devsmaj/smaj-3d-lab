@@ -91,3 +91,5 @@ html,body,#root{width:100%;height:100%;max-width:100%;overflow:hidden!important}
 @keyframes naturalBlink{0%,43%,46%,82%,85%,100%{transform:scaleY(0)}44%,45%,83%,84%{transform:scaleY(1)}}
 @media(max-width:600px){.ai-orb{width:98px}.ai-orb .ai-face{width:86px;height:86px}}
 @media(prefers-reduced-motion:reduce){.ai-orb .ai-face>i{animation:none}}
+/* Remove the camera-off background face completely */
+.ar-stage .camera-consent:before,.ar-stage .camera-consent:after{display:none!important;content:none!important}
