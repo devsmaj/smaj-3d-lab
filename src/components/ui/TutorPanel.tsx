@@ -16,7 +16,13 @@ type Recognition = {
   stop: () => void
 }
 type Position = { x: number; y: number }
-type Props = { open: boolean; onClose: () => void; exploded: boolean; tracking: boolean; gesture: string | null }
+type Props = {
+  open: boolean
+  onClose: () => void
+  exploded: boolean
+  tracking: boolean
+  gesture: string | null
+}
 
 export function TutorPanel({ open, onClose, exploded, tracking, gesture }: Props) {
   const selected = useLabStore(s => s.selectedComponent)
@@ -82,10 +88,7 @@ export function TutorPanel({ open, onClose, exploded, tracking, gesture }: Props
       controller.current = new AbortController()
 
       try {
-        const history: TutorMessage[] = [
-          { role: 'tutor', text: `You are exploring the ${component.name}. Speak to ask me anything.` },
-          latest,
-        ]
+        const history: TutorMessage[] = [latest]
 
         const result = await askTutor({
           message: question,
@@ -99,14 +102,13 @@ export function TutorPanel({ open, onClose, exploded, tracking, gesture }: Props
             visited,
             passed: Object.entries(quizResults)
               .filter(([, passed]) => Boolean(passed))
-              .map(([componentId]) => componentId as keyof typeof componentById),
+              .map(([id]) => id as never),
             availableActions: [],
           },
           signal: controller.current.signal,
         })
 
-        const answer: TutorMessage = { role: 'tutor', text: result.answer }
-        setLatest(answer)
+        setLatest({ role: 'tutor', text: result.answer })
 
         if (voiceEnabled) {
           const utterance = new SpeechSynthesisUtterance(result.answer)
@@ -125,10 +127,10 @@ export function TutorPanel({ open, onClose, exploded, tracking, gesture }: Props
         controller.current = null
       }
     },
-    [busy, component.lesson, component.name, exploded, gesture, latest, quizResults, selected, tracking, visited, voiceEnabled]
+    [busy, component.lesson, component.name, exploded, gesture, latest, quizResults, selected, tracking, voiceEnabled]
   )
 
-  const beginListening = useCallback(() => {
+  const beginListening = useCallback<() => void>(() => {
     if (!listenWanted.current || recognition.current || speaking) return
 
     const instance = getRecognition()
@@ -166,7 +168,7 @@ export function TutorPanel({ open, onClose, exploded, tracking, gesture }: Props
     }
 
     instance.start()
-  }, [beginListening, getRecognition, listenEnabled, send, speaking])
+  }, [getRecognition, listenEnabled, send, speaking])
 
   useEffect(() => {
     window.dispatchEvent(
