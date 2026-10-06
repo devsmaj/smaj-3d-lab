@@ -11,3 +11,5 @@ export const components:LabComponent[]=[
 ]
 export const componentById=Object.fromEntries(components.map(component=>[component.id,component])) as Record<ComponentId,LabComponent>
 export const componentByModelName=Object.fromEntries(components.map(component=>[component.modelName,component.id])) as Record<string,ComponentId>
+
+export function componentIdFromModelName(name:string){const key=name.split('__')[0];return componentByModelName[key]}
