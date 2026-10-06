@@ -36,6 +36,7 @@ export function TutorPanel({ open, onClose }: { open: boolean; onClose: () => vo
   const face = useRef<HTMLDivElement>(null)
   const drag = useRef<{ dx: number; dy: number } | null>(null)
   const lastSpoken = useRef('')
+  const controller = useRef<AbortController | null>(null)
 
   useEffect(() => {
     setLatest({
@@ -72,8 +73,23 @@ export function TutorPanel({ open, onClose }: { open: boolean; onClose: () => vo
       if (!question || busy) return
       setLatest({ role: 'student', text: question })
       setBusy(true)
+      controller.current = new AbortController()
       try {
-        const result = await askTutor(selected, question)
+        const result = await askTutor({
+          message: question,
+          history: [latest],
+          context: {
+            componentId: selected,
+            lesson: component.lesson,
+            interactionState: 'assembled',
+            handTracking: false,
+            gesture: null,
+            visited: [],
+            passed: [],
+            availableActions: [],
+          },
+          signal: controller.current.signal,
+        })
         const message: TutorMessage = { role: 'tutor', text: result.answer }
         setLatest(message)
         if (voiceEnabled) {
@@ -84,12 +100,13 @@ export function TutorPanel({ open, onClose }: { open: boolean; onClose: () => vo
           window.speechSynthesis?.speak(utterance)
         }
       } catch (error) {
-        setLatest({ role: 'tutor', text: String(error) })
+        setLatest({ role: 'tutor', text: `Error: ${error instanceof Error ? error.message : String(error)}` })
       } finally {
         setBusy(false)
+        controller.current = null
       }
     },
-    [selected, busy, voiceEnabled]
+    [selected, component.lesson, latest, busy, voiceEnabled]
   )
 
   const beginListening = useCallback(() => {
@@ -106,10 +123,10 @@ export function TutorPanel({ open, onClose }: { open: boolean; onClose: () => vo
       let interim = ''
       for (let i = event.results.length - 1; i >= 0; i--) {
         interim = event.results[i][0]?.transcript || ''
-        if (event.results[i]?.isFinal) break
-      }
-      if (interim && interim !== lastSpoken.current) {
-        lastSpoken.current = interim
+        if (event.results[i]?.isFinal) {
+          send(interim)
+          break
+        }
       }
     }
     instance.onend = () => {
@@ -124,7 +141,7 @@ export function TutorPanel({ open, onClose }: { open: boolean; onClose: () => vo
       recognition.current = null
     }
     instance.start()
-  }, [getRecognition, speaking, listenEnabled])
+  }, [getRecognition, speaking, listenEnabled, send])
 
   useEffect(() => {
     window.dispatchEvent(
@@ -149,6 +166,7 @@ export function TutorPanel({ open, onClose }: { open: boolean; onClose: () => vo
       listenWanted.current = false
       recognition.current?.stop()
       recognition.current = null
+      controller.current?.abort()
       window.speechSynthesis?.cancel()
       setSpeaking(false)
       setRecognizing(false)
@@ -179,6 +197,7 @@ export function TutorPanel({ open, onClose }: { open: boolean; onClose: () => vo
     () => () => {
       listenWanted.current = false
       recognition.current?.stop()
+      controller.current?.abort()
       window.speechSynthesis?.cancel()
     },
     []
