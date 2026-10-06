@@ -93,3 +93,13 @@ html,body,#root{width:100%;height:100%;max-width:100%;overflow:hidden!important}
 @media(prefers-reduced-motion:reduce){.ai-orb .ai-face>i{animation:none}}
 /* Remove the camera-off background face completely */
 .ar-stage .camera-consent:before,.ar-stage .camera-consent:after{display:none!important;content:none!important}
+/* Animate the face's real eyes and mouth; no synthetic pupils or facial features */
+.ai-orb .ai-face:before,.ai-orb .ai-face:after{display:none!important;content:none!important}
+.ai-orb .ai-face>.face-frame{transform:perspective(320px) rotateX(var(--look-y,0deg)) rotateY(var(--look-x,0deg));transform-origin:50% 62%;transition:transform .12s ease-out,opacity .08s linear}
+.ai-orb .ai-face>.face-frame.base{z-index:1;opacity:1}
+.ai-orb .ai-face>.face-frame.talk{z-index:2;opacity:0}
+.ai-orb .ai-face>.face-frame.blink{z-index:3;opacity:0;animation:realFaceBlink 5.6s infinite}
+.ai-orb .ai-face.speaking>.face-frame.talk{animation:realMouthTalk .34s steps(1,end) infinite}
+@keyframes realFaceBlink{0%,43%,46%,82%,85%,100%{opacity:0}44%,45%,83%,84%{opacity:1}}
+@keyframes realMouthTalk{0%,100%{opacity:0}45%{opacity:1}}
+@media(prefers-reduced-motion:reduce){.ai-orb .ai-face>.face-frame{transform:none}.ai-orb .ai-face>.face-frame.blink,.ai-orb .ai-face.speaking>.face-frame.talk{animation:none}}
