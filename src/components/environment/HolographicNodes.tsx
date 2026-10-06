@@ -1,0 +1,4 @@
+import { useFrame } from '@react-three/fiber'
+import { useMemo, useRef } from 'react'
+import type { Group } from 'three'
+export function HolographicNodes({selected,exploded}:{selected:string;exploded:boolean}){const group=useRef<Group>(null);const nodes=useMemo(()=>[[-6,2,-8],[6,1,-9],[-5,-2,-6],[5,-2,-11],[0,4,-13],[2,0,-16]] as [number,number,number][],[]);useFrame(({clock})=>{if(group.current&&!document.hidden){const pulse=1+Math.sin(clock.elapsedTime*1.5)*.08+(exploded ? .08 : 0);group.current.scale.setScalar(pulse)}});return <group ref={group}>{nodes.map((position,index)=><mesh key={index} position={position}><icosahedronGeometry args={[.11,1]}/><meshBasicMaterial color={selected==='cpu'?'#7eeaff':'#258fc1'} transparent opacity={.58}/></mesh>)}</group>}

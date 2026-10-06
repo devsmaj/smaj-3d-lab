@@ -1,0 +1,2 @@
+import { componentById, type ComponentId } from '../../data/components'
+export function ComponentMetadata({selected,tracking,exploded}:{selected:ComponentId;tracking:boolean;exploded:boolean}){const item=componentById[selected];return <aside className="component-metadata"><span>&gt; SYSTEM.MODEL_SELECTED</span><code>{`{\n  component: "${item.shortName}",\n  state: "${exploded?'EXPLODED':'ACTIVE'}",\n  interaction: "${tracking?'GESTURE':'POINTER'}"\n}`}</code></aside>}

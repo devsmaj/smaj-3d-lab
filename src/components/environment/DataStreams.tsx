@@ -1,0 +1,5 @@
+import { Line } from '@react-three/drei'
+import { useFrame } from '@react-three/fiber'
+import { useMemo, useRef } from 'react'
+import type { Group } from 'three'
+export function DataStreams({pulse}:{pulse:number}){const group=useRef<Group>(null);const streams=useMemo(()=>Array.from({length:7},(_,i)=>Array.from({length:5},(_,j)=>[-9+j*4.5,(i-3)*1.25+Math.sin(j+i)*.25,-7-i*.8] as [number,number,number])),[]);useFrame(({clock,pointer})=>{if(!group.current||document.hidden)return;group.current.position.x=pointer.x*.22;group.current.position.y=Math.sin(clock.elapsedTime*.16)*.08;group.current.rotation.z=pointer.x*.006});return <group ref={group}>{streams.map((points,index)=><Line key={index} points={points} color={index%2?'#0c6c99':'#18bce8'} transparent opacity={.1+Math.min(.12,pulse*.03)} lineWidth={.35}/>)}</group>}

@@ -9,7 +9,7 @@ type Props={rotation:[number,number,number];explode?:number}
 const colors:Record<ComponentId,string>={motherboard:'#19e6d2',cpu:'#00d8ff',ram:'#a875ff',gpu:'#268cff',ssd:'#ff5ee4',cooling:'#76f5ff'}
 const labelPositions:Record<ComponentId,[number,number,number]>={motherboard:[-2.6,.8,0],cpu:[.4,2.2,-.4],ram:[-2.4,2.35,-.2],gpu:[2.7,2.45,1.4],ssd:[-2.7,1.8,1.8],cooling:[.4,4.35,-.4]}
 const isComponentId=(value:unknown):value is ComponentId=>typeof value==='string'&&(componentIds as readonly string[]).includes(value)
-const componentFromMesh=(mesh:Mesh)=>{const stored=mesh.userData.component;return isComponentId(stored.toLowerCase?.())?stored.toLowerCase() as ComponentId:undefined}
+const componentFromMesh=(mesh:Mesh)=>{const stored=mesh.userData.component,value=typeof stored==='string'?stored.toLowerCase():'';return isComponentId(value)?value:undefined}
 
 export function Model({rotation,explode=0}:Props){
  const selected=useLabStore(s=>s.selectedComponent),select=useLabStore(s=>s.selectComponent),component=componentById[selected]
@@ -19,6 +19,6 @@ export function Model({rotation,explode=0}:Props){
  useFrame((_,delta)=>{let moving=false;model.traverse(object=>{if(!(object instanceof Mesh))return;const base=object.userData.assembled as Vector3|undefined,offset=object.userData.explode as number[]|undefined;if(!base||!offset)return;const target=new Vector3(base.x+offset[0]*explode,base.y+offset[1]*explode,base.z+offset[2]*explode);if(object.position.distanceToSquared(target)>.00001){object.position.lerp(target,Math.min(1,delta*5.5));moving=true}});if(moving){model.updateMatrixWorld();invalidate()}})
  useEffect(()=>{model.traverse(object=>{if(!(object instanceof Mesh))return;const base=object.userData.assembled as Vector3|undefined,offset=object.userData.explode as number[]|undefined;if(base&&offset&&explode===0)object.position.copy(base)});invalidate()},[explode,model,invalidate])
  const choose=(event:ThreeEvent<MouseEvent>)=>{event.stopPropagation();const object=event.object instanceof Mesh?event.object:undefined,id=object?componentFromMesh(object):undefined;if(id)select(id)}
- return <group rotation={rotation} scale={.68} onClick={choose} onPointerEnter={()=>document.body.style.cursor='pointer'} onPointerLeave={()=>document.body.style.cursor='default'}><primitive object={model}/>{explode>.15?<Html position={labelPositions[selected]} center distanceFactor={10}><div className="piece-info"><strong>{component.name}</strong><span>{component.role}</span></div></Html>:null}</group>
+ return <group rotation={rotation} scale={.68} onClick={choose} onPointerOver={event=>{event.stopPropagation();const id=event.object instanceof Mesh?componentFromMesh(event.object):undefined;document.body.style.cursor=id?'none':'default';window.dispatchEvent(new CustomEvent('smaj:model-hover',{detail:{label:id?componentById[id].shortName.toUpperCase():''}}))}} onPointerOut={()=>{document.body.style.cursor='default';window.dispatchEvent(new CustomEvent('smaj:model-hover',{detail:{label:''}}))}}><primitive object={model}/>{explode>.15?<Html position={labelPositions[selected]} center distanceFactor={10}><div className="piece-info"><strong>{component.name}</strong><span>{component.role}</span></div></Html>:null}</group>
 }
 useGLTF.preload(`${import.meta.env.BASE_URL}models/computer-system.glb`)

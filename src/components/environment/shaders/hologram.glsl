@@ -1,0 +1,2 @@
+// Fresnel-style hologram fragment function used as the material design contract.
+float hologramFresnel(vec3 normal, vec3 viewDirection){return pow(1.0-max(dot(normalize(normal),normalize(viewDirection)),0.0),2.4);}

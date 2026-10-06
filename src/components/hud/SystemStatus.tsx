@@ -1,0 +1,4 @@
+import type { GestureResult } from '../../gestures/GestureEngine'
+import type { ComponentId } from '../../data/components'
+type Props={tracking:boolean;gesture:GestureResult|null;selected:ComponentId;exploded:boolean;nova:'idle'|'listening'|'speaking'}
+export function SystemStatus({tracking,gesture,selected,exploded,nova}:Props){return <aside className="system-status" aria-label="Live system status"><span>[VISION] <b>HAND_TRACKING</b><em>{tracking?(gesture&&gesture.gesture!=='NONE'?gesture.gesture:'READY'):'OFF'}</em></span><span>[NOVA] <b>CONTEXT_ENGINE</b><em>{nova==='idle'?'READY':nova.toUpperCase()}</em></span><span>[MODEL] <b>{selected.toUpperCase()}</b><em>{exploded?'EXPLODED':'SELECTED'}</em></span><span>[SPACE] <b>INTERACTION</b><em>{tracking?'GESTURE':'POINTER'}</em></span></aside>}

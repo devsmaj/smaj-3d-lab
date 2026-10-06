@@ -1,0 +1,1 @@
+export function SpatialGrid(){return <group position={[0,-2.5,-5]}><gridHelper args={[42,42,'#126b82','#073142']} material-transparent material-opacity={.18}/><gridHelper args={[42,21,'#0c455d','#061f2e']} position={[0,5,-10]} rotation={[Math.PI/2,0,0]} material-transparent material-opacity={.08}/></group>}

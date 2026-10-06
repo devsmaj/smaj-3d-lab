@@ -1,0 +1,4 @@
+import { useFrame } from '@react-three/fiber'
+import { useRef } from 'react'
+import type { Mesh } from 'three'
+export function CursorField({hand,active}:{hand:{x:number;y:number}|null;active:boolean}){const ring=useRef<Mesh>(null);useFrame(({pointer})=>{if(!ring.current)return;const x=hand?(hand.x-.5)*10:pointer.x*5.5,y=hand?(.5-hand.y)*6:pointer.y*3.5;ring.current.position.lerp({x,y,z:-2.5} as never,.16);ring.current.rotation.z+=.006});return <mesh ref={ring}><ringGeometry args={[.18,.22,32]}/><meshBasicMaterial color={active?'#d7f8ff':'#4fbfe8'} transparent opacity={.55} depthWrite={false}/></mesh>}

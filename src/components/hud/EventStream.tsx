@@ -1,0 +1,3 @@
+import { useEffect, useState } from 'react'
+import type { LabEventDetail } from '../../events/labEvents'
+export function EventStream(){const[events,setEvents]=useState<LabEventDetail[]>([]);useEffect(()=>{const receive=(event:Event)=>setEvents(current=>[(event as CustomEvent<LabEventDetail>).detail,...current].slice(0,3));window.addEventListener('smaj:lab-event',receive);return()=>window.removeEventListener('smaj:lab-event',receive)},[]);return <div className="event-stream" aria-live="polite">{events.map((event,index)=><span key={`${event.type}-${index}`}>[{event.type}] {event.label}{event.value?` // ${event.value}`:''}</span>)}</div>}
